@@ -10,22 +10,13 @@ const Navbar = () => {
         </div>
         <div className="nav-links">
             <NavLink 
-                to="/books" 
+                to="/genres" 
                 className={({ isActive }) => `
                     btn btn-ghost hover:bg-base-100/20 btn-xs sm:btn-sm md:btn-md lg:btn-lg
                     ${isActive ? 'bg-base-100/20' : ''}
                 `}
             >
-                Books
-            </NavLink>
-            <NavLink 
-                to="/fantasy" 
-                className={({ isActive }) => `
-                    btn btn-ghost hover:bg-base-100/20 btn-xs sm:btn-sm md:btn-md lg:btn-lg
-                    ${isActive ? 'bg-base-100/20' : ''}
-                `}
-            >
-                Fantasy
+                Genres
             </NavLink>
         </div>
     </div>
