@@ -7,7 +7,7 @@ interface Book {
   authors: string[];
   publishedDate: string;
   thumbnail: string;
-  isbn: string;
+  id: string;
 }
 
 const GenreBooks = () => {
@@ -25,7 +25,7 @@ const GenreBooks = () => {
             authors: item.authors || [],
             publishedDate: item.publishedDate || 'Unknown',
             thumbnail: item.thumbnail,
-            isbn: item.isbn,
+            id: item.id,
           }));
           setBooks(booksList);
         }
@@ -40,7 +40,7 @@ const GenreBooks = () => {
       <h1 className="mb-4"><strong>{(genre ?? 'Unknown').charAt(0).toUpperCase() + (genre ?? 'unknown').slice(1)} Books</strong></h1>
       <ul className="space-y-6">
         {books.map((book, index) => (
-          <Link to={`/book/${book.isbn}`} key={index}>
+          <Link to={`/book/${book.id}`} key={index}>
             <li className="mb-6 bg-secondary/20 p-4 rounded-lg hover:bg-secondary/30 transition-colors">
               <strong>{book.title}</strong> <br />
               Authors: {book.authors.join(", ")} <br />
