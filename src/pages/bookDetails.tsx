@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 
@@ -12,11 +12,15 @@ interface Book {
   description: string;
 }
 
-const BookDetails = () => {
+function BookDetails() {
   const { id } = useParams<{ id: string }>();
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const previousLocation = location.state?.from || '/';
+
 
   useEffect(() => {
     setIsLoading(true);
@@ -48,8 +52,12 @@ const BookDetails = () => {
       .finally(() => setIsLoading(false));
   }, [id]);
 
-  const createMarkup = (html: string) => {
+  function createMarkup(html: string) {
     return { __html: DOMPurify.sanitize(html) };
+  };
+
+  function handleBack() {
+    navigate(previousLocation);
   };
 
   if (isLoading) return <div className="text-center mt-8">Loading book details...</div>;
@@ -58,6 +66,7 @@ const BookDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
+      <button onClick={handleBack}>Back</button>
       {books.map((book, index) => (
         <div key={index} className="p-6 mb-6">
           <div className="flex flex-row gap-8">
@@ -87,6 +96,6 @@ const BookDetails = () => {
       ))}
     </div>
   );
-}
+};
 
 export default BookDetails;

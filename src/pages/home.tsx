@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 
-const Home = () => {
+function Home() {
   return (
     <>
     <h1>novelti</h1>

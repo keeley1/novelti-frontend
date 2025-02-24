@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useSearch } from '../context/searchQueryContext';
 
 interface Book {
   title: string;
@@ -10,8 +11,8 @@ interface Book {
   id: string;
 }
 
-function GenreBooks() {
-  const { genre } = useParams<{ genre: string }>();
+function BookSearchResults() {
+  const { searchQuery } = useSearch();
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function GenreBooks() {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get(`http://localhost:8080/searchbygenre/${genre}`)
+    axios.get(`http://localhost:8080/searchbooks/${searchQuery}`)
       .then(response => {
         if (Array.isArray(response.data)) {
           const booksList = response.data.map((item: any) => ({
@@ -33,7 +34,7 @@ function GenreBooks() {
         }
       })
       .finally(() => setIsLoading(false));
-  }, [genre]);
+  }, [searchQuery]);
 
   if (isLoading) return <div className="text-center mt-8">Loading books...</div>;
 
@@ -43,7 +44,7 @@ function GenreBooks() {
 
   return (
     <>
-      <h1 className="mb-4"><strong>{(genre ?? 'Unknown').charAt(0).toUpperCase() + (genre ?? 'unknown').slice(1)} Books</strong></h1>
+      <h1 className="mb-4"><strong>Books matching: "{(searchQuery ?? 'Unknown').charAt(0).toUpperCase() + (searchQuery ?? 'unknown').slice(1)}" </strong></h1>
       <ul className="space-y-6">
         {books.map((book, index) => (
             <li 
@@ -62,4 +63,4 @@ function GenreBooks() {
   );
 };
 
-export default GenreBooks;
+export default BookSearchResults;
