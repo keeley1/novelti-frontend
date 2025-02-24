@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const Genres = () => {
+function Genres() {
     return (
         <>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8">Genres</h1>
@@ -21,7 +21,6 @@ const Genres = () => {
                 <NavLink to="/genre/historical" className="genre-button">Historical</NavLink>
             </div>
         </div>
-        
         </>
     );
 };
