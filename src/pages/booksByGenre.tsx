@@ -13,29 +13,48 @@ interface Book {
 function GenreBooks() {
   const { genre } = useParams<{ genre: string }>();
   const [books, setBooks] = useState<Book[]>([]);
+  const [startIndex, setStartIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
+  const fetchBooks = async () => {
     setIsLoading(true);
-    axios.get(`http://localhost:8080/searchbygenre/${genre}`)
-      .then(response => {
-        if (Array.isArray(response.data)) {
-          const booksList = response.data.map((item: any) => ({
-            title: item.title,
-            authors: item.authors || [],
-            publishedDate: item.publishedDate || 'Unknown',
-            thumbnail: item.thumbnail,
-            id: item.id,
-          }));
-          setBooks(booksList);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [genre]);
+    setError(null);
+    try {
+      const response = await axios.get(`http://localhost:8080/searchbooks/${genre}?startIndex=${startIndex}`);
+      if (Array.isArray(response.data)) {
+        const booksList = response.data.map((item: any) => ({
+          title: item.title,
+          authors: item.authors || [],
+          publishedDate: item.publishedDate || 'Unknown',
+          thumbnail: item.thumbnail,
+          id: item.id,
+        }));
+        setBooks(booksList);
+      }
+    } catch (err) {
+      setError('Error fetching books');
+    } finally {
+      setIsLoading(false)
+    }
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, [startIndex, genre]);
+
+  const handleNextPage = () => {
+    setStartIndex((prevIndex) => prevIndex + 20);
+  };
+
+  const handlePreviousPage = () => {
+    setStartIndex((prevIndex) => Math.max(prevIndex - 20, 0));
+  };
 
   if (isLoading) return <div className="text-center mt-8">Loading books...</div>;
+  if (error) return <div>{error}</div>;
 
   function handleBookClick(book: Book) {
     navigate(`/book/${book.id}`, { state: { from: location.pathname } });
@@ -58,6 +77,10 @@ function GenreBooks() {
             </li>
         ))}
       </ul>
+      <div className="flex justify-between mt-4">
+        <button onClick={handlePreviousPage} disabled={startIndex === 0} className="btn btn-secondary">Back</button>
+        <button onClick={handleNextPage} className="btn btn-secondary">Next</button>
+      </div>
     </>
   );
 };
