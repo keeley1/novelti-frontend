@@ -3,18 +3,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 body {
-  /*background-color: #362530;*/
   color: #fff;
   font-family: 'Roboto', sans-serif; 
 }
 
 @layer components {
+    .nav-mobile-menu {
+      @apply menu menu-sm 
+             dropdown-content 
+             mt-3 z-[1] p-2 shadow 
+             bg-base-200 rounded-box w-52
+    }
+    .nav-mobile-menu-title {
+      @apply nav-title 
+             absolute left-1/2 
+             transform -translate-x-1/2
+    }
+    .nav-button {
+      @apply btn 
+             !bg-base-200 
+             hover:!bg-base-300 
+             btn-xs sm:btn-sm md:btn-sm lg:btn-md
+    }
     .genre-button {
       @apply btn btn-sm sm:btn-md md:btn-lg lg:btn-lg 
-             border-white hover:border-secondary 
-             text-white hover:text-secondary 
+             bg-info
+             hover:bg-base-100
              w-[90%] sm:w-[40%] md:w-[28%] lg:w-[15%] 
-             lg:h-24 m-4;
+             lg:h-24 m-4
+             justify-start pl-8
+             border-0 hover:border hover:border-white;
     }
   }
 
