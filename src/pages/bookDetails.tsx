@@ -2,15 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
-
-interface Book {
-  title: string;
-  authors: string[];
-  publishedDate: string;
-  thumbnail: string;
-  id: string;
-  description: string;
-}
+import { Book } from '../models/book';
+import { createBook } from '../utils/CreateBook';
+import MissingThumbnail from '../components/missingThumbnail';
 
 function BookDetails() {
   const { id } = useParams<{ id: string }>();
@@ -31,16 +25,7 @@ function BookDetails() {
       .then(response => {
         console.log('API Response:', response.data);
         if (Array.isArray(response.data)) {
-          const booksList = response.data.map((item: any) => ({
-            title: item.title || 'Unknown Title',
-            authors: item.authors || ['Unknown Author'],
-            publishedDate: item.publishedDate || 'Unknown',
-            thumbnail: item.thumbnail || '',
-            id: item.id || '',
-            description: item.description || 'No description available',
-          }));
-          console.log('Processed Books:', booksList);
-          console.log('Description HTML:', booksList[0].description);
+          const booksList = createBook(response.data);
           setBooks(booksList);
         } else {
           setError('Invalid data format received');
@@ -124,13 +109,17 @@ function BookDetails() {
         <div key={index} className="p-6 mb-6">
           <div className="flex flex-row gap-8">
             <div className="flex-shrink-0">
-              <img 
-                src={book.thumbnail} 
-                alt={book.title} 
-                className="w-48 h-auto rounded-lg"
-                loading="lazy"
-                width={200}
-              />
+              {book.thumbnail === "" ? (
+                <MissingThumbnail />
+              ) : (
+                <img 
+                  src={book.thumbnail} 
+                  alt={book.title} 
+                  className="w-48 h-auto rounded-lg"
+                  loading="lazy"
+                  width={200}
+                />
+              )}
             </div>
             <div className="flex-grow">
               <h1 className="text-2xl font-bold mb-4">{book.title}</h1>

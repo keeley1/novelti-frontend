@@ -13,7 +13,7 @@ function Home() {
       />
       
       {/* Text over image */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <div className="home-text-over-image">
         <h1 className="font-bold text-2xl">Discover Your Next Favourite Book</h1>
         <p>Discover your next favourite book, share your thoughts, and connect with readers worldwide.</p>
       </div>

@@ -11,7 +11,7 @@ function Genres() {
                     {genres.map((genre, index) => (
                         <NavLink 
                             key={index} 
-                            to={`/genre/${genre.name.toLowerCase()}`} 
+                            to={`/genre/${genre.name}`} 
                             className="genre-button"
                         >
                             <div className="flex flex-row items-center sm:flex-col sm:items-start">

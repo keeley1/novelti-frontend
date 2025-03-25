@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Genre {
     name: string;
     iconPath: string;
