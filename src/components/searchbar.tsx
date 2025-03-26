@@ -30,10 +30,6 @@ function Searchbar() {
                 }
             }}
             />
-            <button type="submit" className="{({ isActive }) => `
-                    btn btn-ghost hover:bg-base-100/20 btn-xs sm:btn-sm md:btn-md lg:btn-lg
-                    ${isActive ? 'bg-base-100/20' : ''}
-                `}">Search</button>
         </form>
     );
 };

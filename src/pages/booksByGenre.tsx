@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-
-interface Book {
-  title: string;
-  authors: string[];
-  publishedDate: string;
-  thumbnail: string;
-  id: string;
-}
+import { Book } from '../models/book';
+import { createBook } from '../utils/CreateBook';
+import MissingThumbnail from '../components/missingThumbnail';
 
 function GenreBooks() {
   const { genre } = useParams<{ genre: string }>();
@@ -25,13 +20,7 @@ function GenreBooks() {
     try {
       const response = await axios.get(`http://localhost:8080/searchbooks/${genre}?startIndex=${startIndex}`);
       if (Array.isArray(response.data)) {
-        const booksList = response.data.map((item: any) => ({
-          title: item.title,
-          authors: item.authors || [],
-          publishedDate: item.publishedDate || 'Unknown',
-          thumbnail: item.thumbnail,
-          id: item.id,
-        }));
+        const booksList = createBook(response.data);
         setBooks(booksList);
       }
     } catch (err) {
@@ -60,23 +49,39 @@ function GenreBooks() {
     navigate(`/book/${book.id}`, { state: { from: location.pathname } });
   };
 
+  /* Move book list to be a component */
   return (
     <>
-      <h1 className="mb-4"><strong>{(genre ?? 'Unknown').charAt(0).toUpperCase() + (genre ?? 'unknown').slice(1)} Books</strong></h1>
-      <ul className="space-y-6">
-        {books.map((book, index) => (
-            <li 
-            key = {index}
-            className="mb-6 bg-secondary/20 p-4 rounded-lg hover:bg-secondary/30 transition-colors"
-            onClick={() => handleBookClick(book)}
-            >
-              <strong>{book.title}</strong> <br />
-              Authors: {book.authors.join(", ")} <br />
-              Published Date: {book.publishedDate}
-              <img src={book.thumbnail} alt={book.title} loading="lazy" style={{ width: '100px', height: 'auto' }}/>
-            </li>
-        ))}
-      </ul>
+      <h1 className="mb-4 text-bold text-xl"><strong>Browse {genre ?? "Unknown"} Books</strong></h1>
+      {books.map((book, index) => (
+        <div key={index} className="mb-6 bg-info flex gap-4 items-start">
+          {book.thumbnail === "" ? (
+                <MissingThumbnail />
+              ) : (
+              <img 
+                onClick={() => handleBookClick(book)}
+                src={book.thumbnail} 
+                alt={book.title} 
+                loading="lazy" 
+                className="cursor-pointer"
+                style={{ width: "130px", height: "auto" }} 
+              />
+              )}
+          <div className="flex-1">
+            <div className="p-4 flex flex-col min-h-[150px]">
+              <div>
+                <h1 onClick={() => handleBookClick(book)} className="cursor-pointer font-bold text-xl">{book.title}</h1>
+                <p onClick={() => handleBookClick(book)} className="cursor-pointer text-gray-400 hover:text-secondary">by {book.authors}</p>
+                <p onClick={() => handleBookClick(book)} className="cursor-pointer text-gray-400 hover:text-secondary">{book.publishedDate}</p>
+              </div>
+              <div className="mt-auto pt-8 text-right">
+                <p className="text-gray-400">***** (4.7)</p>
+                <p className="text-gray-400">300 pages</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
       <div className="flex justify-between mt-4">
         <button onClick={handlePreviousPage} disabled={startIndex === 0} className="btn btn-secondary">Back</button>
         <button onClick={handleNextPage} className="btn btn-secondary">Next</button>
