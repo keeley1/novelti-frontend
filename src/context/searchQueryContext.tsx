@@ -1,21 +1,35 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface SearchProviderProps {
-  children: ReactNode;
+interface SearchContextType {
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
 }
 
-const SearchContext = createContext<{ searchQuery: string; setSearchQuery: React.Dispatch<React.SetStateAction<string>> }>({ searchQuery: '', setSearchQuery: () => {} });
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+export function SearchProvider({ children }: { children: React.ReactNode }) {
+    const [searchQuery, setSearchQuery] = useState<string>(() => {
+        // Initialize from localStorage if available, otherwise empty string
+        const savedQuery = localStorage.getItem('searchQuery');
+        return savedQuery || '';
+    });
 
-  return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
-      {children}
-    </SearchContext.Provider>
-  );
-};
+    // Update localStorage when searchQuery changes
+    useEffect(() => {
+        localStorage.setItem('searchQuery', searchQuery);
+    }, [searchQuery]);
 
-export const useSearch = () => {
-  return useContext(SearchContext);
-};
+    return (
+        <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
+            {children}
+        </SearchContext.Provider>
+    );
+}
+
+export function useSearch() {
+    const context = useContext(SearchContext);
+    if (context === undefined) {
+        throw new Error('useSearch must be used within a SearchProvider');
+    }
+    return context;
+}
