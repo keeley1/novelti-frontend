@@ -3,8 +3,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import DOMPurify from 'dompurify';
 import { Book } from '../models/book';
-import { createBook } from '../utils/CreateBook';
 import MissingThumbnail from '../components/missingThumbnail';
+import { booksService } from '../services/booksService';
 
 function BookDetails() {
   const { id } = useParams<{ id: string }>();
@@ -17,25 +17,21 @@ function BookDetails() {
   const [showImageInput, setShowImageInput] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState('');
 
-  useEffect(() => {
+  const fetchBook = async () => {
     setIsLoading(true);
-    console.log('Fetching book with ISBN:', id);
+    setError(null);
+    try {
+      const booksList = await booksService("searchbyid", id);
+      setBooks(booksList);
+    } catch (err) {
+      setError('Error fetching books');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    axios.get(`http://localhost:8080/searchbyid/${id}`)
-      .then(response => {
-        console.log('API Response:', response.data);
-        if (Array.isArray(response.data)) {
-          const booksList = createBook(response.data);
-          setBooks(booksList);
-        } else {
-          setError('Invalid data format received');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching book:', error);
-        setError('Failed to load book details');
-      })
-      .finally(() => setIsLoading(false));
+  useEffect(() => {
+    fetchBook();
   }, [id]);
 
   function createMarkup(html: string) {
