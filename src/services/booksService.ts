@@ -6,6 +6,9 @@ import { Book } from "../models/book";
 to do:
 - should functions have return types?
 - are errors being handled ideally?
+
+Thoughts:
+- should I use dependency injection
 */
 
 export async function booksService(searchType: string, searchQuery?: string, startIndex?: number) {
@@ -28,6 +31,7 @@ function constructApiPath(searchType: string, searchQuery: string, startIndex?: 
         ? `${baseUrl}?startIndex=${startIndex}`
         : baseUrl;
 };
+export const __constructApiPath = constructApiPath;
 
 async function callBooksApi(apiPath: string) {
     try {
